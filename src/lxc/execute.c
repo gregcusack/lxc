@@ -42,7 +42,8 @@ lxc_log_define(execute, start);
 
 static int execute_start(struct lxc_handler *handler, void* data)
 {
-	int argc_add, j;
+	printf("execute_start() in src/lxc/container.c \n");
+    	int argc_add, j;
 	char **argv;
 	int argc = 0, i = 0;
 	struct execute_args *my_args = data;

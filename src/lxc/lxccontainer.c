@@ -527,7 +527,8 @@ static bool is_stopped(struct lxc_container *c)
 
 static bool do_lxcapi_is_running(struct lxc_container *c)
 {
-	if (!c)
+	printf("do_lxcapi_is_running() in src/lxc/lxccontainer.c\n");
+    	if (!c)
 		return false;
 
 	return !is_stopped(c);
@@ -5272,6 +5273,7 @@ WRAP_API(int, lxcapi_seccomp_notify_fd)
 
 struct lxc_container *lxc_container_new(const char *name, const char *configpath)
 {
+    	printf("create new container: lxc_container_new()\n");
 	struct lxc_container *c;
 	size_t len;
 	int rc;
@@ -5363,6 +5365,7 @@ struct lxc_container *lxc_container_new(const char *name, const char *configpath
 	c->load_config = lxcapi_load_config;
 	c->want_daemonize = lxcapi_want_daemonize;
 	c->want_close_all_fds = lxcapi_want_close_all_fds;
+	printf("set c->start = lxcapi_start\n");
 	c->start = lxcapi_start;
 	c->startl = lxcapi_startl;
 	c->stop = lxcapi_stop;
