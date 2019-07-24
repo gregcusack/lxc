@@ -1079,6 +1079,14 @@ static bool do_lxcapi_start(struct lxc_container *c, int useinit, char * const a
 		}
 	}
 
+	/* Not sure if this is right place to put check elastic container implementation?? */
+	if(c->elastic) {
+	    printf("omg in do_lxcapi_start() and we are creating EC\n");
+	}
+	else {
+	    printf("in do_lxcapi_start() in file lxccontainer.c. not creating EC\n");
+	}
+
 	conf->reboot = REBOOT_NONE;
 
 	/* Unshare the mount namespace if requested */
@@ -1157,7 +1165,7 @@ static bool lxcapi_start(struct lxc_container *c, int useinit,
 			 char *const argv[])
 {
 	bool ret;
-
+	printf("in lxcapi_start()\n");
 	current_config = c ? c->lxc_conf : NULL;
 	ret = do_lxcapi_start(c, useinit, argv);
 	current_config = NULL;

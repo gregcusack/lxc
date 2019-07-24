@@ -199,7 +199,6 @@ extern int lxc_arguments_parse(struct lxc_arguments *args, int argc,
 	int ret = 0;
 	bool logfile = false;
 	char shortopts[256];
-
 	ret = build_shortopts(args->options, shortopts, sizeof(shortopts));
 	if (ret < 0) {
 		lxc_error(args, "build_shortopts() failed : %s",
@@ -212,11 +211,14 @@ extern int lxc_arguments_parse(struct lxc_arguments *args, int argc,
 		int index = 0;
 
 		c = getopt_long(argc, argv, shortopts, args->options, &index);
+		
 		if (c == -1)
 			break;
 
 		switch (c) {
 		case 'n':
+		    	//print_help_exit(args, 0);
+			//printf("SUUUUUUUHHHH\n");
 			args->name = optarg;
 			break;
 		case 'o':
@@ -250,7 +252,12 @@ extern int lxc_arguments_parse(struct lxc_arguments *args, int argc,
 			print_help_exit(args, 1);
 		case 'h':
 			print_help_exit(args, 0);
+		case 'e':
+			printf("WHAT UP BOIIII\n");
+			args->elastic = 1;
+			break;
 		default:
+			printf("default parse\n");
 			if (args->parser) {
 				ret = args->parser(args, c, optarg);
 				if (ret)

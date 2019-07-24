@@ -65,6 +65,7 @@ static const struct option my_longopts[] = {
 	{"console-log", required_argument, 0, 'L'},
 	{"close-all-fds", no_argument, 0, 'C'},
 	{"pidfile", required_argument, 0, 'p'},
+	{"elastic", no_argument, 0, 'c'},
 	{"share-net", required_argument, 0, OPT_SHARE_NET},
 	{"share-ipc", required_argument, 0, OPT_SHARE_IPC},
 	{"share-uts", required_argument, 0, OPT_SHARE_UTS},
@@ -91,6 +92,7 @@ Options :\n\
                          Note: --daemon implies --close-all-fds\n\
   -s, --define KEY=VAL   Assign VAL to configuration variable KEY\n\
       --share-[net|ipc|uts|pid]=NAME Share a namespace with another container or pid\n\
+  -e, --elasticize	 Turn container into elastic container\n\
 ",
 	.options      = my_longopts,
 	.parser       = my_parser,
@@ -99,6 +101,7 @@ Options :\n\
 	.log_file     = "none",
 	.daemonize    = 1,
 	.pidfile      = NULL,
+	.elastic      = 0,
 };
 
 static int my_parser(struct lxc_arguments *args, int c, char *arg)
@@ -126,6 +129,10 @@ static int my_parser(struct lxc_arguments *args, int c, char *arg)
 		return lxc_config_define_add(&defines, arg);
 	case 'p':
 		args->pidfile = arg;
+		break;
+	case 'e':
+		args->elastic = 1;
+		printf("setting elastic = 1\n");
 		break;
 	case OPT_SHARE_NET:
 		args->share_ns[LXC_NS_NET] = arg;
@@ -186,7 +193,7 @@ int main(int argc, char *argv[])
 	};
 
 	lxc_list_init(&defines);
-
+	
 	if (lxc_caps_init())
 		exit(err);
 
@@ -318,13 +325,22 @@ int main(int argc, char *argv[])
 	if (!my_args.daemonize)
 		c->want_daemonize(c, false);
 
+	if(!my_args.elastic)
+	    printf("No Elastic Container\n");
+	else
+	    printf("Elastic Container\n");
+
 	if (my_args.close_all_fds)
 		c->want_close_all_fds(c, true);
 
-	if (args == default_args)
+	if (args == default_args) {
+	    	printf("start container with default args\n");
 		err = c->start(c, 0, NULL) ? EXIT_SUCCESS : EXIT_FAILURE;
-	else
+	}
+	else {
+	    	printf("start container without default args\n");
 		err = c->start(c, 0, args) ? EXIT_SUCCESS : EXIT_FAILURE;
+	}
 	if (err) {
 		ERROR("The container failed to start");
 
