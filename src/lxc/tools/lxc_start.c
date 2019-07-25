@@ -270,6 +270,9 @@ int main(int argc, char *argv[])
 			ERROR("Failed to create lxc_container");
 			exit(err);
 		}
+
+		printf("c->elastic? :%d\n", c->elastic);
+		printf("c->daemonize? :%d\n", c->daemonize);
 	}
 
 	/* We do not check here whether the container is defined, because we
@@ -325,11 +328,14 @@ int main(int argc, char *argv[])
 	if (!my_args.daemonize)
 		c->want_daemonize(c, false);
 
-	if(!my_args.elastic)
+	if(!my_args.elastic) {
+	    c->elastic = 0;
 	    printf("No Elastic Container\n");
-	else
+	}
+	else {
+	    c->elastic = 1;
 	    printf("Elastic Container\n");
-
+	}
 	if (my_args.close_all_fds)
 		c->want_close_all_fds(c, true);
 

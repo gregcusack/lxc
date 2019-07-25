@@ -881,7 +881,8 @@ static bool wait_on_daemonized_start(struct lxc_handler *handler, int pid)
 
 static bool do_lxcapi_start(struct lxc_container *c, int useinit, char * const argv[])
 {
-	int ret;
+	printf("in do_lxcapi_start()\n");
+    	int ret;
 	struct lxc_handler *handler;
 	struct lxc_conf *conf;
 	char *default_args[] = {
@@ -925,6 +926,7 @@ static bool do_lxcapi_start(struct lxc_container *c, int useinit, char * const a
 	/* initialize handler */
 	handler = lxc_init_handler(c->name, conf, c->config_path, c->daemonize);
 
+	printf("in do_lxcapi_start() after handler\n");
 	container_mem_unlock(c);
 	if (!handler)
 		return false;
@@ -950,7 +952,14 @@ static bool do_lxcapi_start(struct lxc_container *c, int useinit, char * const a
 	 * here to protect the on disk container?  We don't want to exclude
 	 * things like lxc_info while the container is running.
 	 */
+	if(c->elastic) {
+	    printf("EC4 c->elastic\n");
+	}
+	else {
+	    printf("EC4 no c->elastic\n");
+	}
 	if (c->daemonize) {
+		printf("in do_lxcapi_start() container daemonized\n");
 		bool started;
 		char title[2048];
 		pid_t pid;
@@ -976,6 +985,11 @@ static bool do_lxcapi_start(struct lxc_container *c, int useinit, char * const a
 
 			free_init_cmd(init_cmd);
 			lxc_free_handler(handler);
+			printf("do_lxcapi_start. parent returning...rest is child.\n");
+			INFO("info in do_lxcapi_parent\n");
+			TRACE("trace in do_lxcapi_parent\n");
+			printf("c->config_path: %s\n", c->config_path);
+			ERROR("parent should log. do_lxcapi_start. pid: %d\n", pid);
 			return started;
 		}
 
@@ -993,6 +1007,8 @@ static bool do_lxcapi_start(struct lxc_container *c, int useinit, char * const a
 			else
 				INFO("Set process title to %s", title);
 		}
+		
+		ERROR("info. child should log. do_lxcapi_start. pid: %d\n", pid);
 
 		/* We fork() a second time to be reparented to init. Like
 		 * POSIX's daemon() function we change to "/" and redirect
@@ -1020,6 +1036,8 @@ static bool do_lxcapi_start(struct lxc_container *c, int useinit, char * const a
 			_exit(EXIT_FAILURE);
 		}
 
+		ERROR("pid 1: %d\n", pid);
+		
 		keepfds[0] = handler->conf->maincmd_fd;
 		keepfds[1] = handler->state_socket_pair[0];
 		keepfds[2] = handler->state_socket_pair[1];
@@ -1029,14 +1047,18 @@ static bool do_lxcapi_start(struct lxc_container *c, int useinit, char * const a
 			_exit(EXIT_FAILURE);
 
 		/* redirect std{in,out,err} to /dev/null */
-		ret = null_stdfds();
+		//ret = null_stdfds(); //UNCOMMENT!!!
+		ret = 0;
 		if (ret < 0) {
 			ERROR("Failed to redirect std{in,out,err} to /dev/null");
 			_exit(EXIT_FAILURE);
 		}
+		ERROR("pid 2: %d\n", pid);
 
 		/* become session leader */
 		ret = setsid();
+
+		ERROR("pid 3: %d\n", pid);
 		if (ret < 0)
 			TRACE("Process %d is already process group leader", lxc_raw_getpid());
 	} else if (!am_single_threaded()) {
@@ -1050,6 +1072,8 @@ static bool do_lxcapi_start(struct lxc_container *c, int useinit, char * const a
 	 * right PID.
 	 */
 	if (c->pidfile) {
+
+		ERROR("in do_lxcapi_start() container has pidfile. pid: %d\n", getpid());
 		int w;
 		char pidstr[INTTYPE_TO_STRLEN(pid_t)];
 
@@ -1080,12 +1104,13 @@ static bool do_lxcapi_start(struct lxc_container *c, int useinit, char * const a
 		}
 	}
 
+	ERROR("pid before c->elastic check: %d\n", getpid());
 	/* Not sure if this is right place to put check elastic container implementation?? */
 	if(c->elastic) {
-	    printf("omg in do_lxcapi_start() and we are creating EC\n");
+	    ERROR("omg in do_lxcapi_start() and we are creating EC\n");
 	}
 	else {
-	    printf("in do_lxcapi_start() in file lxccontainer.c. not creating EC\n");
+	    ERROR("in do_lxcapi_start() in file lxccontainer.c. not creating EC\n");
 	}
 
 	conf->reboot = REBOOT_NONE;
@@ -1130,12 +1155,16 @@ reboot:
 		goto on_error;
 	}
 
-	if (useinit)
-		ret = lxc_execute(c->name, argv, 1, handler, c->config_path,
+	if (useinit) {
+		printf("useinit == true\n");
+	    	ret = lxc_execute(c->name, argv, 1, handler, c->config_path,
 				  c->daemonize, &c->error_num);
-	else
+	}
+	else {
+	    	printf("useinit != true\n");
 		ret = lxc_start(c->name, argv, handler, c->config_path,
 				c->daemonize, &c->error_num);
+	}
 
 	if (conf->reboot == REBOOT_REQ) {
 		INFO("Container requested reboot");
@@ -1811,7 +1840,8 @@ static bool do_lxcapi_create(struct lxc_container *c, const char *t,
 			     const char *bdevtype, struct bdev_specs *specs,
 			     int flags, char *const argv[])
 {
-	int partial_fd;
+	printf("do_lxcapi_create() in container.h\n");
+    	int partial_fd;
 	mode_t mask;
 	pid_t pid;
 	bool ret = false, rootfs_managed = true;

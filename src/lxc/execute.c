@@ -115,7 +115,7 @@ int lxc_execute(const char *name, char *const argv[], int quiet,
 		bool daemonize, int *error_num)
 {
 	struct execute_args args = {.argv = argv, .quiet = quiet};
-
+	printf("lxc_execute() in execute.c\n");
 	TRACE("Doing lxc_execute");
 	handler->conf->is_execute = true;
 	return __lxc_start(name, handler, &execute_start_ops, &args, lxcpath,

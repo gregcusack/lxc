@@ -1402,6 +1402,7 @@ __cgfsng_ops static inline bool cgfsng_monitor_create(struct cgroup_ops *ops,
 	if (idx == 1000)
 		return false;
 
+	printf("EC4: The monitor process uses %s as cgroup\n", monitor_cgroup);
 	INFO("The monitor process uses \"%s\" as cgroup", monitor_cgroup);
 	return true;
 }

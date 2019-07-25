@@ -1660,6 +1660,7 @@ static int proc_pidfd_open(pid_t pid)
  */
 static int lxc_spawn(struct lxc_handler *handler)
 {
+    	printf("EC4: lxc_spawn()\n");
 	__do_close_prot_errno int data_sock0 = -EBADF, data_sock1 = -EBADF;
 	int i, ret;
 	char pidstr[20];
@@ -1670,6 +1671,9 @@ static int lxc_spawn(struct lxc_handler *handler)
 	bool share_ns = false;
 	struct lxc_conf *conf = handler->conf;
 	struct cgroup_ops *cgroup_ops = handler->cgroup_ops;
+
+	/* add by greg */
+	//DIR* = opendir("/home/greg/
 
 	id_map = &conf->id_map;
 	wants_to_map_ids = !lxc_list_empty(id_map);
@@ -1985,7 +1989,7 @@ int __lxc_start(const char *name, struct lxc_handler *handler,
 	int ret, status;
 	struct lxc_conf *conf = handler->conf;
 	struct cgroup_ops *cgroup_ops;
-
+	printf("in __lxc_start()\n");
 	ret = lxc_init(name, handler);
 	if (ret < 0) {
 		ERROR("Failed to initialize container \"%s\"", name);
@@ -2033,8 +2037,9 @@ int __lxc_start(const char *name, struct lxc_handler *handler,
 			INFO("Set up container rootfs as host root");
 		}
 	}
-
+	printf("EC4: about to call lxc_spawn()\n");
 	ret = lxc_spawn(handler);
+	printf("EC4: after lxc_spawn() call\n");
 	if (ret < 0) {
 		ERROR("Failed to spawn container \"%s\"", name);
 		goto out_detach_blockdev;
@@ -2128,7 +2133,6 @@ static int start(struct lxc_handler *handler, void* data)
 static int post_start(struct lxc_handler *handler, void* data)
 {
 	struct start_args *arg = data;
-
 	NOTICE("Started \"%s\" with pid \"%d\"", arg->argv[0], handler->pid);
 	return 0;
 }
