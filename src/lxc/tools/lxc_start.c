@@ -327,15 +327,7 @@ int main(int argc, char *argv[])
 
 	if (!my_args.daemonize)
 		c->want_daemonize(c, false);
-
-	if(!my_args.elastic) {
-	    c->elastic = 0;
-	    printf("No Elastic Container\n");
-	}
-	else {
-	    c->elastic = 1;
-	    printf("Elastic Container\n");
-	}
+	
 	if (my_args.close_all_fds)
 		c->want_close_all_fds(c, true);
 
@@ -359,6 +351,16 @@ int main(int argc, char *argv[])
 		err = c->error_num;
 		lxc_container_put(c);
 		exit(err);
+	}
+	
+	if(!my_args.elastic) {
+	    printf("No Elastic Container\n");
+	}
+	else {
+	    printf("Elastic Container\n");
+		printf("Make sys_ec_connect_() fcn call here!\n");
+		pid_t c_pid = c->init_pid(c);
+		printf("container pid: %d\n", c_pid);
 	}
 
 out:
