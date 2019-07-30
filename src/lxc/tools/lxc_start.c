@@ -345,8 +345,8 @@ int main(int argc, char *argv[])
 		lxc_container_put(c);
 		exit(err);
 	}
-	if(c->elastic) {
-	    printf("Creating elastic container. calling ec_connect_ sys call\m");
+	if(my_args.elastic) {
+	    printf("Creating elastic container. calling ec_connect_ sys call\n");
 	    pid_t c_pid = c->init_pid(c);
 	    printf("container pid: %d\n", c_pid);
 	}
