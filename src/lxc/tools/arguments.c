@@ -250,6 +250,10 @@ extern int lxc_arguments_parse(struct lxc_arguments *args, int argc,
 			print_help_exit(args, 1);
 		case 'h':
 			print_help_exit(args, 0);
+		case 'e':
+			printf("Elastic Flag Set\n");
+			args->elastic = 1;
+			break;
 		default:
 			if (args->parser) {
 				ret = args->parser(args, c, optarg);

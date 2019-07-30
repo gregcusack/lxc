@@ -869,6 +869,9 @@ struct lxc_container {
 		      unsigned long mountflags, struct lxc_mount *mnt);
 
 	int (*seccomp_notify_fd)(struct lxc_container *c);
+
+	/* add elastic container flag */
+	int elastic;
 };
 
 /*!

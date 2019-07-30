@@ -151,6 +151,8 @@ struct lxc_arguments {
 
 	/* private arguments */
 	void *data;
+
+	int elastic;
 };
 
 #define LXC_COMMON_OPTIONS                                                     \
@@ -163,6 +165,7 @@ struct lxc_arguments {
 	    { "logpriority", required_argument, 0, 'l'         },              \
 	    { "lxcpath",     required_argument, 0, 'P'         },              \
 	    { "rcfile",      required_argument, 0, OPT_RCFILE  },              \
+	    { "elastic",     no_argument,	0, 'e'	       },	       \
 	    { 0,             0,                 0, 0           }
 
 /* option keys for long only options */
