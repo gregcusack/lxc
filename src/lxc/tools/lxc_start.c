@@ -92,7 +92,7 @@ Options :\n\
                          Note: --daemon implies --close-all-fds\n\
   -s, --define KEY=VAL   Assign VAL to configuration variable KEY\n\
       --share-[net|ipc|uts|pid]=NAME Share a namespace with another container or pid\n\
-  -e, --elasticize	 Turn container into elastic container\n\
+  -e  --elasticize	 Turn container into elastic container\n\
 ",
 	.options      = my_longopts,
 	.parser       = my_parser,
@@ -132,7 +132,7 @@ static int my_parser(struct lxc_arguments *args, int c, char *arg)
 		break;
 	case 'e':
 		args->elastic = 1;
-		printf("setting elastic = 1\n");
+		printf("set elastic = 1\n");
 		break;
 	case OPT_SHARE_NET:
 		args->share_ns[LXC_NS_NET] = arg;
@@ -352,15 +352,10 @@ int main(int argc, char *argv[])
 		lxc_container_put(c);
 		exit(err);
 	}
-	
-	if(!my_args.elastic) {
-	    printf("No Elastic Container\n");
-	}
-	else {
-	    printf("Elastic Container\n");
-		printf("Make sys_ec_connect_() fcn call here!\n");
-		pid_t c_pid = c->init_pid(c);
-		printf("container pid: %d\n", c_pid);
+	if(my_args.elastic) {
+	    printf("Creating elastic container. calling ec_connect_ sys call\n");
+	    pid_t c_pid = c->init_pid(c);
+	    printf("container pid: %d\n", c_pid);
 	}
 
 out:

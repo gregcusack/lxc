@@ -253,7 +253,7 @@ extern int lxc_arguments_parse(struct lxc_arguments *args, int argc,
 		case 'h':
 			print_help_exit(args, 0);
 		case 'e':
-			printf("WHAT UP BOIIII\n");
+			printf("Elastic Flag Set\n");
 			args->elastic = 1;
 			break;
 		default:
