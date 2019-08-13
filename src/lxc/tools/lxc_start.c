@@ -40,6 +40,10 @@
 #include <sys/types.h>
 #include <sys/utsname.h>
 #include <unistd.h>
+/* EC stuff */
+//#include <ec/ec_connection.h>
+#include <sys/syscall.h>
+#define __NR_SYSCALL__ 335
 
 #include <lxc/lxccontainer.h>
 
@@ -349,6 +353,14 @@ int main(int argc, char *argv[])
 	    printf("Creating elastic container. calling ec_connect_ sys call\n");
 	    pid_t c_pid = c->init_pid(c);
 	    printf("container pid: %d\n", c_pid);
+	    int ret;
+	    ret = syscall(__NR_SYSCALL__, "127.0.0.1", 4444, c_pid);
+	    if(ret != 0) {
+		    printf("ERROR: SYSCALL returned : %d\n", ret);
+	    }
+	    else {
+		    printf("Container socket to GCM should be set up\n");
+	    }
 	}
 
 out:
